@@ -1,21 +1,47 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
-import { render } from 'astro:content';
+// Import layout and project data
+import Layout from '../../layouts/Layout.astro';
 
+// Define project data
+const projectData = {
+  "tiling": {
+    title: "Tiling & Grouting",
+    "content": "This project involved removing cracked tiles, regrouting the bathroom floor, and applying waterproof sealant to edges and corners."
+  },
+  "paving": {
+    title: "Paving Installation",
+    "content": "Installed concrete pavers along a garden path. Leveled the soil base, laid geotextile fabric, and secured each paver for a clean finish."
+  },
+  "deck-repair": {
+    title: "Deck Repairs",
+    "content": "Repaired a backyard timber deck with new planks and applied a weather-resistant coating to extend its life and appearance."
+  },
+  "fence-install": {
+    title: "Fence Installation",
+    "content": "Erected a Colorbond side fence with a lockable gate, providing privacy and security for the client’s backyard."
+  },
+  "maintenance": {
+    title: "General Maintenance",
+    "content": "Ongoing handyman work including fixing squeaky doors, patching walls, replacing tap washers, and more."
+  }
+};
+
+// Generate static paths for each slug
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
-	}));
+  return {
+    paths: Object.keys(projectData).map((slug) => ({
+      params: { slug },
+      props: { project: projectData[slug] }
+    }))
+  };
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
-const { Content } = await render(post);
+// Get current project from props
+const { project } = Astro.props;
 ---
 
-<BlogPost {...post.data}>
-	<Content />
-</BlogPost>
+<Layout title={project.title}>
+  <h1>{project.title}</h1>
+  <p>{project.content}</p>
+  <a href="/services/" style="display: inline-block; margin-top: 1rem; color: #007acc;">← Back to all services</a>
+</Layout>
